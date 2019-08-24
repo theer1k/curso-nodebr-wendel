@@ -1,167 +1,118 @@
-const BaseRoute = require('./base/baseRoute');
-const Joi = require('joi');
-const Boom = require('boom');
-
-const failAction = (request, headers, error) => {
-    throw error;
-};
+const BaseRoute = require('./base/baseRoute')
+const Joi = require('joi')
 
 class HeroRoutes extends BaseRoute {
     constructor(db) {
-        super();
-        this.db = db;
-    }
-
-    create() {
-        return {
-            path: '/heroes',
-            method: 'POST',
-            config: {
-                tags: ['api'],
-                description: 'Create heroe',
-                notes: 'Can create a heroe',
-                validate: {
-                    failAction: failAction,
-                    payload: {
-                        nome: Joi.string().required().min(3).max(100),
-                        poder: Joi.string().required().min(2).max(100),
-                    }
-                }
-            },
-            handler: async (request) => {
-                try {
-                    const { nome, poder } = request.payload;
-
-                    const result = await this.db.create({ nome, poder });
-
-                    return {
-                        message: 'Hero created successfully.',
-                        _id: result._id
-                    }
-                } catch (err) {
-                    console.error(err);
-
-                    return Boom.internal();
-                }
-            }
-        }
-    }
-
-    delete() {
-        return {
-            path: '/heroes/{id}',
-            method: 'DELETE',
-            config: {
-                tags: ['api'],
-                description: 'Delete heroe',
-                notes: 'Can delete a hero',
-                validate: {
-                    failAction: failAction,
-                    params: {
-                        id: Joi.string().required()
-                    }
-                }
-            },
-            handler: async (request, headers) => {
-                try {
-                    const { id } = request.params;
-
-                    const result = await this.db.delete(id);
-
-                    if (result.n !== 1) {
-                        return Boom.preconditionFailed('Not found in database.');
-                    }
-
-                    return {
-                        message: 'Hero deleted successfully.'
-                    }
-                } catch (err) {
-                    console.error(err);
-
-                    return Boom.internal();
-                }
-            }
-        }
-    }
-
-    update() {
-        return {
-            path: '/heroes/{id}',
-            method: 'PATCH',
-            config: {
-                tags: ['api'],
-                description: 'Update heroe',
-                notes: 'Can update a hero',
-                validate: {
-                    params: {
-                        id: Joi.string().required()
-                    },
-                    failAction: failAction,
-                    payload: {
-                        nome: Joi.string().min(3).max(100),
-                        poder: Joi.string().min(2).max(100),
-                    }
-                }
-            },
-            handler: async (request) => {
-                try {
-                    const { id } = request.params;
-                    const { payload } = request;
-
-                    const data = JSON.parse(JSON.stringify(payload))
-                    const result = await this.db.update(id, data);
-
-                    if (result.nModified !== 1) {
-                        return Boom.preconditionFailed('Not found in database.');
-                    }
-
-                    return {
-                        message: 'Hero updated successfully.'
-                    }
-                } catch (err) {
-                    console.error(err);
-
-                    return Boom.internal();
-                }
-            }
-        }
+        super()
+        this.db = db
     }
 
     list() {
         return {
-            path: '/heroes',
+            path: '/herois',
             method: 'GET',
             config: {
                 tags: ['api'],
-                description: 'List heroes',
-                notes: 'Can paginate and filter by nome',
+                description: 'listar herois',
+                notes: 'retorna a base inteira de herois',
                 validate: {
-                    failAction: failAction,
-                    query: {
-                        skip: Joi.number().integer().default(10),
-                        limit: Joi.number().integer().default(10),
-                        nome: Joi.string().min(3).max(100),
+                    headers: Joi.object({
+                        authorization: Joi.string().required()
+                    }).unknown()
+                }
+            },
+            handler: (request, headers) => {
+                return this.db.read()
+            }
+        }
+    }
+    create() {
+        return {
+            path: '/herois',
+            method: 'POST',
+            config: {
+                tags: ['api'],
+                description: 'cadastrar herois',
+                notes: 'Cadastra um heroi por nome e poder',
+                validate: {
+                    failAction: (request, h, err) => {
+                        throw err;
+                    },
+                    headers: Joi.object({
+                        authorization: Joi.string().required()
+                    }).unknown(),
+                    payload: {
+                        nome: Joi.string().max(100).required(),
+                        poder: Joi.string().max(30).required()
+                    }
+                },
+
+            },
+            handler: (request, headers) => {
+                const payload = request.payload
+                return this.db.create(payload)
+            }
+        }
+    }
+    update() {
+        return {
+            path: '/herois/{id}',
+            method: 'PATCH',
+            config: {
+                tags: ['api'],
+                description: 'atualizar herois',
+                notes: 'atualiza um heroi por ID',
+                validate: {
+                    failAction: (request, h, err) => {
+                        throw err;
+                    },
+                    headers: Joi.object({
+                        authorization: Joi.string().required()
+                    }).unknown(),
+                    params: {
+                        id: Joi.string().required()
+                    },
+                    payload: {
+                        nome: Joi.string().max(100),
+                        poder: Joi.string().max(30)
+                    }
+                },
+
+            },
+            handler: (request, headers) => {
+                const payload = request.payload;
+                const id = request.params.id;
+                return this.db.update(id, payload)
+            }
+        }
+    }
+    delete() {
+        return {
+            path: '/herois/{id}',
+            method: 'DELETE',
+            config: {
+                tags: ['api'],
+                description: 'remover herois',
+                notes: 'remove um heroi por id',
+                validate: {
+                    failAction: (request, h, err) => {
+                        throw err;
+                    },
+                    headers: Joi.object({
+                        authorization: Joi.string().required()
+                    }).unknown(),
+                    params: {
+                        id: Joi.string().required()
                     }
                 }
             },
             handler: (request, headers) => {
-                try {
-                    const { skip, limit, nome } = request.query;
-
-                    const query = nome ? {
-                        nome:
-                            { $regex: `.*${nome}*.` }
-                    } : {}
-
-                    return this.db.read(nome ? query : {}, skip, limit);
-                } catch (err) {
-                    console.error(err);
-
-                    return Boom.internal();
-                }
+                const id = request.params.id;
+                return this.db.delete(id)
             }
         }
     }
+
 }
 
-module.exports = HeroRoutes;
+module.exports = HeroRoutes

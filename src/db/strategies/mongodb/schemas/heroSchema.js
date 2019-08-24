@@ -15,4 +15,4 @@ const heroiSchema = new Mongoose.Schema({
 })
 
 //mocha workaround
-module.exports = Mongoose.models.heroes || Mongoose.model('heroes', heroiSchema)
+module.exports = Mongoose.models.herois || Mongoose.model('herois', heroiSchema)

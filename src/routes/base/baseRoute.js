@@ -5,4 +5,4 @@ class BaseRoute {
     }
 }
 
-module.exports = BaseRoute;
+module.exports = BaseRoute

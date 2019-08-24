@@ -1,7 +1,7 @@
 const assert = require('assert')
-const MongoDb = require('./../src/db/strategies/mongodb/mongoDbStrategy')
-const HeroSchema = require('./../src/db/strategies/mongodb/schemas/heroSchema')
-const Context = require('./../src/db/strategies/base/contextStrategy')
+const MongoDb = require('../src/db/strategies/mongodb/mongoDbStrategy')
+const HeroSchema = require('../src/db/strategies/mongodb/schemas/heroSchema')
+const Context = require('../src/db/strategies/base/contextStrategy')
 
 // 1o alterar criar pasta mongodb
 // 2o mover mongodbStrategy para mongodb

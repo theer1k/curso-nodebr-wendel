@@ -7,10 +7,10 @@ const STATUS = {
     3: 'Disconectando',
 }
 class MongoDB extends ICrud {
-    
-     // 1o 
+    // 3o
     constructor(connection, schema) {
         super()
+        // 4o
         this._connection = connection;
         this._collection = schema;
     }
@@ -26,14 +26,16 @@ class MongoDB extends ICrud {
         return STATUS[this._connection.readyState]
 
     }
-    // 3o
+     // 1o 
     static connect() {
+
         Mongoose.connect('mongodb://erikhenrique:root@localhost:27017/heroes', {
             useNewUrlParser: true
         }, function (error) {
             if (!error) return;
             console.log('Falha na conexão!', error)
-        })
+        });
+
         const connection = Mongoose.connection
         connection.once('open', () => console.log('database rodando!!'))
         return connection;
@@ -42,8 +44,8 @@ class MongoDB extends ICrud {
     async create(item) {
         return this._collection.create(item)
     }
-    async read(item = {}, skip, limit) {
-        return this._collection.find(item).skip(skip).limit(limit)
+    async read(item = {}) {
+        return this._collection.find(item, { nome: 1, poder: 1, insertedAt: 1})
     }
     async update(id, item) {
         return this._collection.updateOne({_id: id}, { $set: item})

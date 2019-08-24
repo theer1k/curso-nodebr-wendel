@@ -1,6 +1,6 @@
 // npm i mongoose
 const Mongoose = require('mongoose')
-Mongoose.connect('mongodb://erikhenrique:root@localhost:27017/heroes', {
+Mongoose.connect('mongodb://erickwendel:minhaoutrasenhasecreta@localhost:27017/herois', {
   useNewUrlParser: true
 }, (error) => {
   if (!error) return;
@@ -24,7 +24,7 @@ const heroiSchema = new Mongoose.Schema({
     required: true
   },
 })
-const model = Mongoose.model('heroes', heroiSchema)
+const model = Mongoose.model('herois', heroiSchema)
 async function main() {
   const result = await model.create({
     nome: 'Batman',

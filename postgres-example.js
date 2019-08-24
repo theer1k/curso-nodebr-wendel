@@ -21,7 +21,7 @@
 
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(
-  'heroes', //database
+  'herois', //database
   'erickwendel', // user
   'minhasenhasecreta', //senha
   {
@@ -39,8 +39,8 @@ const sequelize = new Sequelize(
 );
 
 (async () => {
-  const Heroes = sequelize.define(
-    'heroes',
+  const Herois = sequelize.define(
+    'herois',
     {
       id: {
         type: Sequelize.INTEGER,
@@ -68,14 +68,14 @@ const sequelize = new Sequelize(
   );
 
   // force: true will drop the table if it already exists
-  await Heroes.sync();
+  await Herois.sync();
   // Table created
-  const result = await Heroes.create({
+  const result = await Herois.create({
     nome: 'John',
     poder: 'Hancock',
   });
   console.log(
     'result',
-    await Heroes.findAll({ raw: true, attributes: ['nome', 'poder', 'id'] }),
+    await Herois.findAll({ raw: true, attributes: ['nome', 'poder', 'id'] }),
   );
 })();

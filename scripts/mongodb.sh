@@ -1,15 +1,15 @@
-use heroes
+use herois
 
 
 // create
-db.heroes.create({ nome: 'Iron man', poder: 'Rico'})
+db.herois.create({ nome: 'Iron man', poder: 'Rico'})
 
 // read
-db.heroes.find({})
+db.herois.find({})
 
 // update
-db.heroes.update({_id: id}, {$set: {nome: 'papaleguas'}})
+db.herois.update({_id: id}, {$set: {nome: 'papaleguas'}})
 
 // delete
-db.heroes.delete({_id: id})
+db.herois.delete({_id: id})
 

@@ -1,16 +1,14 @@
 const IDb = require('../base/interfaceDb');
 const Sequelize = require('sequelize');
- 
-class PostgreSQLStrategy extends IDb {
-  //1o
 
+class PostgreSQLStrategy extends IDb {
   constructor(connection, schema) {
     super();
     this._db = schema;
     this._connection = connection;
 
   }
-  //2o
+
   static async defineModel(connection, schema) {
     const model = connection.define(
       schema.name, schema.schema, schema.options,
@@ -37,6 +35,7 @@ class PostgreSQLStrategy extends IDb {
         //   ssl: true,
       },
     );
+
     return sequelize
   }
 
@@ -64,8 +63,9 @@ class PostgreSQLStrategy extends IDb {
     });
   }
 
-  update(id, item) {
-    return this._db.update(item, {
+  update(id, item, upsert = false) {
+    const fn = upsert ? 'upsert' : 'update'
+    return this._db[fn](item, {
       where: {
         id
       }
